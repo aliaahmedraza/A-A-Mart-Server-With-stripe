@@ -8,12 +8,12 @@ const productGetController = async (req, res) => {
       return res.status(404).json({ error: "No products found." });
     }
     const productDetails = products.map((product) => {
-    //   const imageUrl = product?.image?.data
-    //     ? product.image.data
-    //     : `/product/image/${product._id}`;
-    //   console.log("product", product);
+      //   const imageUrl = product?.image?.data
+      //     ? product.image.data
+      //     : `/product/image/${product._id}`;
+      //   console.log("product", product);
 
-    //   console.log("product image", product.image);
+      //   console.log("product image", product.image);
       return {
         _id: product._id,
         title: product.title,
@@ -22,7 +22,7 @@ const productGetController = async (req, res) => {
         price: product.price,
       };
     });
-
+    // console.log (productDetails);
     return res.status(200).json({ products: productDetails });
   } catch (error) {
     console.error("Error retrieving products:", error);
