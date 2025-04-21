@@ -52,29 +52,37 @@ const app = express();
 // ——————————————————
 // 1) CORS setup
 // ——————————————————
-// 1) CORS + manual headers (before anything else)
-const CLIENT_URL = process.env.CLIENT_URL || "https://a-a-mart-stripe.vercel.app";
-const allowedOrigins = [CLIENT_URL, "http://localhost:3000"];
+// allowed client origins (add any others you need)
+const allowedOrigins = [
+  process.env.CLIENT_URL,                   // e.g. "https://a-a-mart-stripe.vercel.app"
+  "http://localhost:3000"
+].filter(Boolean);
 
-app.use((req, res, next) => {
-  const origin = req.headers.origin;
-  if (allowedOrigins.includes(origin)) {
-    res.setHeader("Access-Control-Allow-Origin", origin);
-  }
-  res.setHeader("Access-Control-Allow-Credentials", "true");
-  res.setHeader(
-    "Access-Control-Allow-Methods",
-    "GET,POST,PUT,DELETE,OPTIONS"
-  );
-  res.setHeader(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
-  );
-  if (req.method === "OPTIONS") {
-    return res.sendStatus(204);
-  }
-  next();
-});
+const corsOptions = {
+  origin(origin, callback) {
+    // allow tools like Postman (no origin) or valid clients
+    if (!origin || allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    callback(new Error(`CORS policy: origin '${origin}' not allowed.`));
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: [
+    "Origin",
+    "X-Requested-With",
+    "Content-Type",
+    "Accept",
+    "Authorization"
+  ]
+};
+
+// 1a) apply CORS for all routes
+app.use(cors(corsOptions));
+
+// 1b) explicitly handle OPTIONS preflight
+app.options("*", cors(corsOptions));
+
 
 // ——————————————————
 // 2) Standard middleware
@@ -84,15 +92,18 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static("public"));
 
+
 // ——————————————————
 // 3) Your routes
 // ——————————————————
 app.use(allRouters);
 
+
 // ——————————————————
 // 4) Initialize DB & start server
 // ——————————————————
-dbConfig();                           // ← don’t forget the ()
-app.listen(process.env.PORT, () =>
-  console.log(`Server running on port ${process.env.PORT}`)
-);
+dbConfig();  // make sure this really runs your DB connection
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
