@@ -52,21 +52,29 @@ const app = express();
 // ——————————————————
 // 1) CORS setup
 // ——————————————————
+// 1) CORS + manual headers (before anything else)
 const CLIENT_URL = process.env.CLIENT_URL || "https://a-a-mart-stripe.vercel.app";
+const allowedOrigins = [CLIENT_URL, "http://localhost:3000"];
 
-const corsOptions = {
-  origin(origin, cb) {
-    if (!origin) return cb(null, true);
-    if (origin === CLIENT_URL) return cb(null, true);
-    cb(new Error(`CORS policy blocked origin: ${origin}`));
-  },
-  credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization", "Accept"]
-};
-
-app.use(cors(corsOptions));
-app.options("*", cors(corsOptions));    // enable preflight
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+  }
+  res.setHeader("Access-Control-Allow-Credentials", "true");
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET,POST,PUT,DELETE,OPTIONS"
+  );
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+  );
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(204);
+  }
+  next();
+});
 
 // ——————————————————
 // 2) Standard middleware
