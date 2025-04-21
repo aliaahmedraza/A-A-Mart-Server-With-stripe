@@ -9,14 +9,13 @@ import cookieParser from "cookie-parser";
 dotenv.config();
 const app = express();
 
-// === CORS Setup ===
 const allowedOrigins = [
   process.env.CLIENT_URL || "https://a-a-mart-client-w-ith-stripe.vercel.app",
   "http://localhost:3000"
 ];
 
 app.use(cors({
-  origin: function (origin, callback) {
+  origin: (origin, callback) => {
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
@@ -31,7 +30,11 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(express.json());
 app.use(allRouters);
-
+// Place this below all routers
+app.use((err, req, res, next) => {
+  console.error("Global error handler:", err.message);
+  res.status(500).json({ error: err.message || "Internal Server Error" });
+});
 dbConfig;
 
 app.listen(process.env.PORT, () => console.log("Server is running"));
