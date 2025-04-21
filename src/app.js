@@ -9,11 +9,11 @@ import cookieParser from "cookie-parser";
 dotenv.config();
 const app = express();
 const corsOptions = {
-  origin: "http://localhost:3000",
+  origin: "https://a-amart.vercel.app",
   credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], 
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
 };
-app.use(cors(corsOptions)); 
+app.use(cors(corsOptions));
 app.use(express.static('public'));
 app.use(cookieParser());
 app.use(bodyParser.json());
