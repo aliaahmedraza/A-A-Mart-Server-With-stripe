@@ -9,7 +9,7 @@ import cookieParser from "cookie-parser";
 dotenv.config();
 const app = express();
 const corsOptions = {
-  origin: "https://a-amart.vercel.app",
+  origin: "https://a-amart-ch97kul61-ali-ahmed-razas-projects.vercel.app",
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
 };
