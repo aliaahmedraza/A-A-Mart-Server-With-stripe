@@ -59,7 +59,7 @@ app.use(cors({
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
-      console.error("❌ Blocked CORS origin:", origin); // log actual origin
+      console.error("❌ Blocked CORS origin:", origin);
       callback(new Error("CORS not allowed for this origin"));
     }
   },
@@ -68,17 +68,11 @@ app.use(cors({
 
 // ✅ Handle preflight requests (just in case)
 app.options("*", cors());
-
-// ✅ Middleware
 app.use(express.static("public"));
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(express.json());
-
-// ✅ Your routes
 app.use(allRouters);
-
-// ✅ Catch internal errors
 app.use((err, req, res, next) => {
   console.error("Error handler:", err);
   res.status(500).json({ error: err.message });
