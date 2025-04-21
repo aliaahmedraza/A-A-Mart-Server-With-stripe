@@ -8,45 +8,30 @@ import cookieParser from "cookie-parser";
 
 dotenv.config();
 const app = express();
-const CLIENT_URL = process.env.CLIENT_URL
-  || "https://a-a-mart-stripe.vercel.app";
 
-app.use((req, res, next) => {
-  const origin = req.headers.origin;
-  // only echo back origins you trust:
-  const allowed = [
-    process.env.CLIENT_URL,             // your front‑end URL
-    "http://localhost:3000"
-  ].filter(Boolean);
+// === CORS Setup ===
+const allowedOrigins = [
+  process.env.CLIENT_URL || "https://a-a-mart-client-w-ith-stripe.vercel.app",
+  "http://localhost:3000"
+];
 
-  if (allowed.includes(origin)) {
-    res.setHeader("Access-Control-Allow-Origin", origin);
-    res.setHeader("Access-Control-Allow-Credentials", "true");
-    res.setHeader(
-      "Access-Control-Allow-Methods",
-      "GET,POST,PUT,DELETE,OPTIONS"
-    );
-    res.setHeader(
-      "Access-Control-Allow-Headers",
-      "Origin, X-Requested-With, Content-Type, Accept, Authorization"
-    );
-  }
-
-  // short‑circuit preflights
-  if (req.method === "OPTIONS") {
-    return res.sendStatus(204);
-  }
-
-  next();
-});
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+}));
 
 app.use(express.static('public'));
 app.use(cookieParser());
 app.use(bodyParser.json());
-app.use(allRouters);
 app.use(express.json());
+app.use(allRouters);
 
 dbConfig;
 
 app.listen(process.env.PORT, () => console.log("Server is running"));
-
