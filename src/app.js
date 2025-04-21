@@ -9,7 +9,7 @@ import cookieParser from "cookie-parser";
 dotenv.config();
 const app = express();
 const CLIENT_URL = process.env.CLIENT_URL
-  || "https://a-a-mart-stripe-osj7xopb4-ali-ahmed-razas-projects.vercel.app"
+  || "https://a-a-mart-stripe.vercel.app"
   || "http://localhost:3000";
 
 const corsOptions = {
