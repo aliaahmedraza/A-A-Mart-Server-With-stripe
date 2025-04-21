@@ -50,16 +50,16 @@ dotenv.config();
 const app = express();
 
 const allowedOrigins = [
-  process.env.CLIENT_URL,
+  "https://a-a-mart-client-w-ith-stripe.vercel.app",
   "http://localhost:3000"
 ];
 
-// ✅ Best practice CORS setup
 app.use(cors({
   origin: function (origin, callback) {
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
+      console.error("❌ Blocked CORS origin:", origin); // log actual origin
       callback(new Error("CORS not allowed for this origin"));
     }
   },
