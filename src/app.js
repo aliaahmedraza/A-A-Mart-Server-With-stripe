@@ -9,11 +9,15 @@ import cookieParser from "cookie-parser";
 dotenv.config();
 const app = express();
 const corsOptions = {
-  origin: "*",
+  origin: 'https://aa-mart-one.vercel.app', // or process.env.CLIENT_URL
   credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 };
+
 app.use(cors(corsOptions));
+// handle preflight for all routes
+app.options('*', cors(corsOptions));
 app.use(express.static('public'));
 app.use(cookieParser());
 app.use(bodyParser.json());
